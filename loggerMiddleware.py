@@ -1,4 +1,6 @@
 from werkzeug.wrappers import Request, Response
+import jwt
+
 savedUuids = {}
 class LoggerMiddleware(object):
     def __init__(self, app):
@@ -11,7 +13,6 @@ class LoggerMiddleware(object):
         if request.path == '/login':
             return self.app(environ, start_response)
 
-        print('request.headers: ',type(request.headers))
         if not('Authorization' in request.headers):
             res = Response(u'Authorization failed', mimetype='text/plain', status=401)
             return res(environ, start_response)
@@ -22,8 +23,13 @@ class LoggerMiddleware(object):
 
         token = bearerToken[len('Bearer '):]
         print(token)
+        key = "secret1"
         if token in savedUuids:
             print('Is Authenticated User')
+            decoded = jwt.decode(token, key, algorithms="HS256" )
+            email = decoded['email']
+            print('decoded: ', decoded)
+            print('decoded email: ', email)
             return self.app(environ, start_response)
 
         # just do here everything what you need

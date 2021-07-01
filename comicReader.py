@@ -4,6 +4,8 @@ from init import users
 import uuid
 from loggerMiddleware import LoggerMiddleware, savedUuids
 # from flask_restful import Api
+import jwt
+import base64
 
 # print('here', i)
 app = Flask(__name__)
@@ -18,13 +20,23 @@ def login():
     email = data['email']
     password = data['password']
 
+
+    example = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+    decoded = base64.b64decode(example)
+    print('here: ',decoded)
+
     if(email in users and password == users[email]):
         msg = 'User authenticated'
-        generated_uuid = uuid.uuid4()
+        key="secret1"
+        encoded = jwt.encode({'email':email }, key, algorithm="HS256")
+        # print('encoded:', encoded)
+        # decoded = jwt.decode(encoded, key, algorithms="HS256")
+        # print('decoded: ', decoded)
+        # generated_uuid = uuid.uuid4()
 
-        savedUuids[str(generated_uuid)] = email
+        savedUuids[str(encoded)] = email
         print('savedUuids: ', savedUuids)
-        return jsonify(data=msg, uuid=generated_uuid)
+        return jsonify(data=msg, uuid=encoded)
     else:
         msg = 'Invalid user'
         return jsonify(data=msg)
