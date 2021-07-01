@@ -13,6 +13,9 @@ class LoggerMiddleware(object):
         if request.path == '/login':
             return self.app(environ, start_response)
 
+        if request.path == '/register':
+            return self.app(environ, start_response)
+
         if not('Authorization' in request.headers):
             res = Response(u'Authorization failed', mimetype='text/plain', status=401)
             return res(environ, start_response)

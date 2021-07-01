@@ -1,11 +1,9 @@
 from flask import Flask, jsonify, send_file, request
 from utilities import getPrevPage, getNextPage
 from init import users
-import uuid
 from loggerMiddleware import LoggerMiddleware, savedUuids
-# from flask_restful import Api
 import jwt
-import base64
+import hashlib
 
 # print('here', i)
 app = Flask(__name__)
@@ -13,19 +11,30 @@ arr = ['Tom And Jerry', 'Lion King']
 
 app.wsgi_app = LoggerMiddleware(app.wsgi_app)
 
+@app.route("/register", methods=['POST'])
+def register():
+    data = request.json
+    email = data['email']
+    password = data['password']
+    result = hashlib.sha256(password.encode()).hexdigest()
+    newUser = {email: result}
+
+    users.update(newUser)
+    print(users)
+    filehandler = open('authDetails.txt', 'wt')
+    data = str(users)
+    filehandler.write(data)
+
+    return jsonify(users)
 
 @app.route("/login", methods=['POST'])
 def login():
     data = request.json
     email = data['email']
     password = data['password']
+    hashedpassword = hashlib.sha256(password.encode()).hexdigest()
 
-
-    example = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
-    decoded = base64.b64decode(example)
-    print('here: ',decoded)
-
-    if(email in users and password == users[email]):
+    if(email in users and hashedpassword == users[email]):
         msg = 'User authenticated'
         key="secret1"
         encoded = jwt.encode({'email':email }, key, algorithm="HS256")
