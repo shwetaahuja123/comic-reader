@@ -11,6 +11,10 @@ arr = ['Tom And Jerry', 'Lion King']
 
 app.wsgi_app = LoggerMiddleware(app.wsgi_app)
 
+@app.route("/health", methods=['GET'])
+def health():
+    return jsonify(status='Healthy'), 200
+
 @app.route("/register", methods=['POST'])
 def register():
     data = request.json

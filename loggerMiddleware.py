@@ -10,10 +10,7 @@ class LoggerMiddleware(object):
         # not Flask request - from werkzeug.wrappers import Request
         request = Request(environ)
 
-        if request.path == '/login':
-            return self.app(environ, start_response)
-
-        if request.path == '/register':
+        if request.path == '/register' or request.path == '/health' or request.path == '/login':
             return self.app(environ, start_response)
 
         if not('Authorization' in request.headers):
