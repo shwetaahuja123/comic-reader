@@ -19,20 +19,12 @@ class LoggerMiddleware(object):
 
         bearerToken = request.headers['Authorization']
 
-        print('path: %s, url: %s' % (request.path, request.url))
-
         token = bearerToken[len('Bearer '):]
-        print(token)
         key = "secret1"
         if token in savedUuids:
-            print('Is Authenticated User')
             decoded = jwt.decode(token, key, algorithms="HS256" )
             email = decoded['email']
-            print('decoded: ', decoded)
-            print('decoded email: ', email)
             return self.app(environ, start_response)
 
-        # just do here everything what you need
-        print('Is NOT Authenticated User')
         res = Response(u'Authorization failed', mimetype='text/plain', status=401)
         return res(environ, start_response)

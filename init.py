@@ -7,8 +7,6 @@ def initialize():
     dictionary = ast.literal_eval(contents)
 
     file.close()
-
-    print(dictionary)
     return dictionary
 
 users = initialize()

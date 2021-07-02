@@ -24,7 +24,6 @@ def register():
     newUser = {email: result}
 
     users.update(newUser)
-    print(users)
     filehandler = open('authDetails.txt', 'wt')
     data = str(users)
     filehandler.write(data)
@@ -42,13 +41,8 @@ def login():
         msg = 'User authenticated'
         key="secret1"
         encoded = jwt.encode({'email':email }, key, algorithm="HS256")
-        # print('encoded:', encoded)
-        # decoded = jwt.decode(encoded, key, algorithms="HS256")
-        # print('decoded: ', decoded)
-        # generated_uuid = uuid.uuid4()
 
         savedUuids[str(encoded)] = email
-        print('savedUuids: ', savedUuids)
         return jsonify(data=msg, uuid=encoded)
     else:
         msg = 'Invalid user'
@@ -59,7 +53,6 @@ def getComicList():
     headers = request.headers
     token = headers['Authorization']
     token = token[len('Bearer '):]
-    print(token)
     if token in savedUuids:
         print('Is Authenticated User')
         return jsonify(arr)
@@ -83,12 +76,8 @@ def readComic(name,page):
     try:
         with open(filename, "r") as f:
             content = f.read()
-        # print(content)
         return jsonify(data=content, status='SUCCESS', links=links)
-    # return send_file(
-    #         filename,
-    #         as_attachment=True,
-    #     )
+
     except Exception as e:
         return(str(e))
 
